@@ -1,0 +1,9 @@
+<resources>
+    <string name="app_name">CQ</string>
+    <string name="title_home">Home</string>
+    <string name="title_dashboard">Dashboard</string>
+    <string name="title_search">Search</string>
+    <string name="topic">Topic</string>
+    <string name="topics">Topics</string>
+    <string name="search">Search</string>
+</resources>
