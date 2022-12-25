@@ -7,6 +7,11 @@
         android:title="@string/title_home" />
 
     <item
+        android:id="@+id/navigation_favourite"
+        android:icon="@drawable/ic_favourite"
+        android:title="@string/favourite" />
+
+    <item
         android:id="@+id/navigation_topic"
         android:icon="@drawable/ic_topic"
         android:title="@string/topics" />
