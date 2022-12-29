@@ -29,8 +29,8 @@ class HomeAdapter(private val quoteList: ArrayList<Quote>) :
         // contents of the view with that element
         val currentItem = quoteList[position]
         viewHolder.textQuote.text = currentItem.toString()
-        viewHolder.imgCopy.setImageResource(R.drawable.ic_copy_foreground)
-        viewHolder.imgFavourite.setImageResource(R.drawable.ic_favourite_empty_foreground)
+        viewHolder.imgCopy.setImageResource(R.drawable.ic_copy)
+        viewHolder.imgFavourite.setImageResource(R.drawable.ic_favourite_empty)
     }
 
     // Return the size of your dataset (invoked by the layout manager)

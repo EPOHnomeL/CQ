@@ -50,6 +50,7 @@ class HomeFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
         initData()
         recyclerView = view.findViewById(R.id.home_recycler_view)
         adapter = HomeAdapter(quoteArrayList)
@@ -66,7 +67,7 @@ class HomeFragment : Fragment() {
     private fun initData() {
 
         val gson = Gson()
-        val text = resources.openRawResource(R.raw.test_quotes)
+        val text = resources.openRawResource(R.raw.quotes2)
             .bufferedReader().use { it.readText() }
         val quoteType = object : TypeToken<ArrayList<Quote>>() {}.type
         quoteArrayList = gson.fromJson(text, quoteType)

@@ -7,11 +7,6 @@ data class Quote(
     val id: Int
 ) {
     override fun toString(): String {
-
-        var temp: String = if (topic.size == 1) "Topic: " else "Topics: "
-        for (t in topic) {
-            temp += "$t "
-        }
         return "$quote\n\n— $author"
     }
 

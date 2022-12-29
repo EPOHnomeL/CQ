@@ -7,4 +7,6 @@
     <string name="topics">Topics</string>
     <string name="search">Search</string>
     <string name="favourite">Favourite</string>
+    <string name="app_title">Christian Quotes</string>
+    <string name="emptyfav">EmptyFav</string>
 </resources>
