@@ -30,7 +30,7 @@ class HomeAdapter(private val quoteList: ArrayList<Quote>) :
         val currentItem = quoteList[position]
         print(currentItem)
         viewHolder.textQuote.text = currentItem.toString()
-        viewHolder.textTopic.text = currentItem.topic.toString()
+        viewHolder.textTopic.text = currentItem.topics.toString()
         viewHolder.imgCopy.setImageResource(R.drawable.ic_copy)
         viewHolder.imgFavourite.setImageResource(R.drawable.ic_favourite_empty)
     }

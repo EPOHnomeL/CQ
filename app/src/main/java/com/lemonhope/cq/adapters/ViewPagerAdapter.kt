@@ -14,7 +14,7 @@ import kotlin.collections.List
 import com.lemonhope.cq.models.Quote
 import com.lemonhope.cq.models.QuoteModel
 
-class ViewPagerAdapter(private val contents: ArrayList<QuoteModel>, private val context: Context?) : PagerAdapter() {
+class ViewPagerAdapter(private val contents: List<QuoteModel>, private val context: Context?) : PagerAdapter() {
 
 
     override fun getCount(): Int {
@@ -38,7 +38,7 @@ class ViewPagerAdapter(private val contents: ArrayList<QuoteModel>, private val 
 
         val currentItem = contents[position]
         textQuote.text = currentItem.toString()
-        textTopic.text = "Holy"
+        textTopic.text = currentItem.topics[0]
         imgCopy.setImageResource(R.drawable.ic_copy)
         imgFavourite.setImageResource(R.drawable.ic_favourite_empty)
 

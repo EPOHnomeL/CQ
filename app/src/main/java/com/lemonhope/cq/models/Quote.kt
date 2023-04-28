@@ -3,7 +3,7 @@ package com.lemonhope.cq.models
 data class Quote(
     val quote: String,
     val author: String,
-    val topic: List<String>,
+    val topics: List<String>,
     val id: Int
 ) {
     override fun toString(): String {
