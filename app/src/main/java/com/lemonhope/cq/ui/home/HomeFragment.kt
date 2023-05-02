@@ -1,5 +1,6 @@
 package com.lemonhope.cq.ui.home
 
+import android.content.res.Resources
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -7,6 +8,7 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.viewpager.widget.ViewPager
+import androidx.viewpager2.widget.ViewPager2
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import com.lemonhope.cq.Database
@@ -19,11 +21,17 @@ import io.realm.kotlin.Realm
 import io.realm.kotlin.RealmConfiguration
 import io.realm.kotlin.ext.query
 import io.realm.kotlin.ext.realmListOf
+import io.realm.kotlin.query.RealmResults
 import io.realm.kotlin.types.RealmList
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import java.io.InputStream
+import java.lang.Math.abs
+import java.text.SimpleDateFormat
+import java.time.LocalDate
+import java.time.LocalDateTime
+import kotlin.random.Random
 
 class HomeFragment : Fragment() {
 
@@ -31,8 +39,7 @@ class HomeFragment : Fragment() {
     private val binding get() = _binding!!
     private lateinit var mAdapter: ViewPagerAdapter
     private lateinit var mViewPager: ViewPager
-    private var quotes: RealmList<QuoteModel> = realmListOf()
-    private lateinit var realm: Realm
+    private var randints: ArrayList<Int> = arrayListOf()
 
 
     override fun onCreateView(
@@ -49,7 +56,8 @@ class HomeFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         mViewPager = view.findViewById(R.id.viewpager)
-        mAdapter = ViewPagerAdapter(Database.getInstance(resources).query<QuoteModel>().find(), context)
+        mAdapter = ViewPagerAdapter(context, mViewPager)
+        mAdapter.getNextSetQuotes()
         mViewPager.setPageTransformer(true, ViewPagerStack())
         mViewPager.adapter = mAdapter
     }
@@ -62,10 +70,10 @@ class HomeFragment : Fragment() {
     class ViewPagerStack : ViewPager.PageTransformer {
         override fun transformPage(page: View, position: Float) {
             if (position >= 0) {
-                page.scaleY = (0.88f - 0.05f * position)
+                page.scaleY = (0.95f - 0.07f * position)
                 page.scaleX = 1f
                 page.translationX = -page.width * position
-                page.translationY = position - 120
+                page.translationY = position
             }
         }
     }
