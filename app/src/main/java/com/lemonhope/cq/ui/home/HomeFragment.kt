@@ -1,46 +1,28 @@
 package com.lemonhope.cq.ui.home
 
-import android.content.res.Resources
+
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.view.ViewCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
-import androidx.viewpager.widget.ViewPager
 import androidx.viewpager2.widget.ViewPager2
-import com.google.gson.Gson
-import com.google.gson.reflect.TypeToken
 import com.lemonhope.cq.Database
 import com.lemonhope.cq.R
 import com.lemonhope.cq.adapters.ViewPagerAdapter
 import com.lemonhope.cq.databinding.FragmentHomeBinding
-import com.lemonhope.cq.models.Quote
 import com.lemonhope.cq.models.QuoteModel
-import io.realm.kotlin.Realm
-import io.realm.kotlin.RealmConfiguration
 import io.realm.kotlin.ext.query
-import io.realm.kotlin.ext.realmListOf
-import io.realm.kotlin.query.RealmResults
-import io.realm.kotlin.types.RealmList
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.launch
-import java.io.InputStream
-import java.lang.Math.abs
-import java.text.SimpleDateFormat
-import java.time.LocalDate
-import java.time.LocalDateTime
-import kotlin.random.Random
+
 
 class HomeFragment : Fragment() {
 
     private var _binding: FragmentHomeBinding? = null
     private val binding get() = _binding!!
     private lateinit var mAdapter: ViewPagerAdapter
-    private lateinit var mViewPager: ViewPager
-    private var randints: ArrayList<Int> = arrayListOf()
-
+    private lateinit var mViewPager: ViewPager2
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
@@ -56,9 +38,15 @@ class HomeFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         mViewPager = view.findViewById(R.id.viewpager)
-        mAdapter = ViewPagerAdapter(context, mViewPager)
+        mAdapter = ViewPagerAdapter(
+            mutableListOf(),
+            requireContext(),
+            mViewPager
+        )
+        mAdapter.initDB()
         mAdapter.getNextSetQuotes()
-        mViewPager.setPageTransformer(true, ViewPagerStack())
+        mViewPager.offscreenPageLimit = 3
+        mViewPager.setPageTransformer(SliderTransformer(3))
         mViewPager.adapter = mAdapter
     }
 
@@ -67,13 +55,50 @@ class HomeFragment : Fragment() {
         _binding = null
     }
 
-    class ViewPagerStack : ViewPager.PageTransformer {
+    class SliderTransformer(private val offscreenPageLimit: Int) : ViewPager2.PageTransformer {
+
+        companion object {
+
+            private const val DEFAULT_TRANSLATION_X = .0f
+            private const val DEFAULT_TRANSLATION_FACTOR = 1.2f
+
+            private const val SCALE_FACTOR = .14f
+            private const val DEFAULT_SCALE = 1f
+
+            private const val ALPHA_FACTOR = .3f
+            private const val DEFAULT_ALPHA = 1f
+
+        }
+
         override fun transformPage(page: View, position: Float) {
-            if (position >= 0) {
-                page.scaleY = (0.95f - 0.07f * position)
-                page.scaleX = 1f
-                page.translationX = -page.width * position
-                page.translationY = position
+
+            page.apply {
+
+                ViewCompat.setElevation(page, -kotlin.math.abs(position))
+
+                val scaleFactor = -SCALE_FACTOR * position + DEFAULT_SCALE
+                val alphaFactor = -ALPHA_FACTOR * position + DEFAULT_ALPHA
+
+                when {
+                    position <= 0f -> {
+                        translationX = DEFAULT_TRANSLATION_X
+                        scaleX = DEFAULT_SCALE
+                        scaleY = DEFAULT_SCALE
+                        alpha = DEFAULT_ALPHA + position
+                    }
+                    position <= offscreenPageLimit - 1 -> {
+                        scaleX = scaleFactor
+                        scaleY = scaleFactor
+                        translationX = -(width / DEFAULT_TRANSLATION_FACTOR) * position
+                        alpha = alphaFactor
+                    }
+                    else -> {
+                        translationX = DEFAULT_TRANSLATION_X
+                        scaleX = DEFAULT_SCALE
+                        scaleY = DEFAULT_SCALE
+                        alpha = DEFAULT_ALPHA
+                    }
+                }
             }
         }
     }

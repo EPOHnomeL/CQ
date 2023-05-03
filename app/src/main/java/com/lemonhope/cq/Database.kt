@@ -28,6 +28,7 @@ class Database {
                                 .initialData{
                                     // Show something as it is the first startup
                                     // Delete raw resource
+                                    Log.i("loading", "LOADING JSON TO DB")
                                     val gson = Gson()
                                     val text = resources.openRawResource(R.raw.quotes2).bufferedReader().use { it.readText() }
                                     val quoteType = object : TypeToken<List<Quote>>() {}.type
