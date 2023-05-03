@@ -14,8 +14,10 @@ class QuoteModel() : RealmObject{
     var quote: String = ""
     var author: String = ""
     var topics: RealmList<String> = realmListOf()
+    var favourite: Boolean = false
 
     override fun toString(): String {
         return "$quote\n\n— $author"
     }
-    }
+
+}

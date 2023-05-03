@@ -29,6 +29,7 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
 
         Database.getInstance(resources)
+//        Database.deleteDatabase()
 
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)

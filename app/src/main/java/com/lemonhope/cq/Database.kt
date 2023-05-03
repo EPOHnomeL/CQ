@@ -37,6 +37,7 @@ class Database {
                                         val temp = QuoteModel()
                                         temp.quote = quote.quote
                                         temp.author = quote.author
+                                        temp.favourite = false
                                         for (topic in quote.topics){
                                             temp.topics.add(topic)
                                         }

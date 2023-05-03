@@ -3,8 +3,13 @@ package com.lemonhope.cq.adapters
 import android.content.ClipData
 import android.content.ClipboardManager
 import android.content.Context
+import android.content.res.Configuration
 import android.graphics.Color
+import android.graphics.RadialGradient
+import android.graphics.Shader
 import android.graphics.drawable.GradientDrawable
+import android.provider.ContactsContract.Data
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -12,6 +17,7 @@ import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
 import androidx.cardview.widget.CardView
+import androidx.core.content.getSystemService
 import androidx.recyclerview.widget.RecyclerView
 import androidx.viewpager2.widget.ViewPager2
 import com.lemonhope.cq.Database
@@ -36,6 +42,7 @@ class ViewPagerAdapter(
         val textTopic: TextView
         val card: CardView
         val copyImg: ImageView
+        val favImg: ImageView
 
         init {
             // Define click listener for the ViewHolder's View
@@ -43,6 +50,7 @@ class ViewPagerAdapter(
             textTopic = view.findViewById(R.id.row_home_text_topic)
             card = view.findViewById(R.id.row_home_card_view)
             copyImg = view.findViewById(R.id.row_home_img_copy)
+            favImg = view.findViewById(R.id.row_home_img_fav)
         }
     }
 
@@ -58,9 +66,10 @@ class ViewPagerAdapter(
         if(position == itemCount-1){
             viewPager.post(runnable)
         }
-        val currentItem = contents[position]
+        var currentItem = contents[position]
 
-        val colors: ArrayList<Int> = arrayListOf(Color.rgb(140, 227, 222))
+
+        val colors: ArrayList<Int> = arrayListOf(Color.rgb(117, 189, 185))
 
         holder.textQuote.text = currentItem.toString()
         var s: String = ""
@@ -74,6 +83,25 @@ class ViewPagerAdapter(
         holder.card.setBackgroundDrawable(grad)
 
         holder.textTopic.text = s
+
+        holder.favImg.setImageResource(if (!currentItem.favourite) R.drawable.ic_favourite_empty else R.drawable.ic_favourite)
+
+        holder.favImg.setOnClickListener {
+            Database.getInstance(context.resources).writeBlocking {
+                val q: QuoteModel? = this.query<QuoteModel>("_id == $0", currentItem._id).first().find()
+                q?.favourite = !currentItem.favourite
+                Log.i("worked", "YEAH")
+            }
+            currentItem =  Database.getInstance(context.resources).query<QuoteModel>("_id == $0", currentItem._id).first().find()!!
+            holder.favImg.setImageResource(if (!currentItem.favourite) R.drawable.ic_favourite_empty else R.drawable.ic_favourite)
+            val toast =
+                Toast.makeText(
+                    context.applicationContext,
+                    if (currentItem.favourite) "Added to favourites" else "Removed from favourites",
+                    Toast.LENGTH_SHORT
+                )
+            toast.show()
+        }
 
         holder.copyImg.setOnClickListener {
             // Set quote as clipboard
@@ -91,6 +119,7 @@ class ViewPagerAdapter(
                 )
             toast.show()
         }
+
     }
 
     override fun getItemCount(): Int {

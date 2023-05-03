@@ -2,6 +2,7 @@ package com.lemonhope.cq.ui.home
 
 
 import android.os.Bundle
+import android.util.TypedValue
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -9,12 +10,9 @@ import androidx.core.view.ViewCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.viewpager2.widget.ViewPager2
-import com.lemonhope.cq.Database
 import com.lemonhope.cq.R
 import com.lemonhope.cq.adapters.ViewPagerAdapter
 import com.lemonhope.cq.databinding.FragmentHomeBinding
-import com.lemonhope.cq.models.QuoteModel
-import io.realm.kotlin.ext.query
 
 
 class HomeFragment : Fragment() {
