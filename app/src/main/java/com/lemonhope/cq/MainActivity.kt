@@ -28,7 +28,7 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        Database.getInstance(resources)
+        Database.setResources(resources)
 //        Database.deleteDatabase()
 
         binding = ActivityMainBinding.inflate(layoutInflater)

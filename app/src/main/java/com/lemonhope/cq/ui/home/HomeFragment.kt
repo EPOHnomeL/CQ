@@ -1,6 +1,7 @@
 package com.lemonhope.cq.ui.home
 
 
+import android.content.Context
 import android.os.Bundle
 import android.util.TypedValue
 import android.view.LayoutInflater
@@ -10,9 +11,12 @@ import androidx.core.view.ViewCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.viewpager2.widget.ViewPager2
+import com.lemonhope.cq.Database
 import com.lemonhope.cq.R
 import com.lemonhope.cq.adapters.ViewPagerAdapter
 import com.lemonhope.cq.databinding.FragmentHomeBinding
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 
 
 class HomeFragment : Fragment() {
@@ -41,8 +45,7 @@ class HomeFragment : Fragment() {
             requireContext(),
             mViewPager
         )
-        mAdapter.initDB()
-        mAdapter.getNextSetQuotes()
+
         mViewPager.offscreenPageLimit = 3
         mViewPager.setPageTransformer(SliderTransformer(3))
         mViewPager.adapter = mAdapter
@@ -51,6 +54,16 @@ class HomeFragment : Fragment() {
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
+    }
+
+    override fun onStart() {
+        super.onStart()
+//        runBlocking{
+//            launch{
+//                mAdapter.initDB()
+                mAdapter.getNextSetQuotes()
+//            }
+//        }
     }
 
     class SliderTransformer(private val offscreenPageLimit: Int) : ViewPager2.PageTransformer {

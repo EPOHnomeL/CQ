@@ -11,6 +11,7 @@ class QuoteModel() : RealmObject{
 
     @PrimaryKey
     var _id: org.mongodb.kbson.ObjectId = ObjectId.invoke()
+    var index: Int = 0
     var quote: String = ""
     var author: String = ""
     var topics: RealmList<String> = realmListOf()
