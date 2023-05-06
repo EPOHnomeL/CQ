@@ -58,12 +58,7 @@ class HomeFragment : Fragment() {
 
     override fun onStart() {
         super.onStart()
-//        runBlocking{
-//            launch{
-//                mAdapter.initDB()
-                mAdapter.getNextSetQuotes()
-//            }
-//        }
+        mAdapter.getNextSetQuotes()
     }
 
     class SliderTransformer(private val offscreenPageLimit: Int) : ViewPager2.PageTransformer {

@@ -5,11 +5,8 @@ import android.content.ClipboardManager
 import android.content.Context
 import android.content.res.Configuration
 import android.graphics.Color
-import android.graphics.RadialGradient
-import android.graphics.Shader
 import android.graphics.drawable.GradientDrawable
-import android.provider.ContactsContract.Data
-import android.util.Log
+import android.util.TypedValue
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -17,14 +14,13 @@ import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
 import androidx.cardview.widget.CardView
-import androidx.core.content.getSystemService
 import androidx.recyclerview.widget.RecyclerView
 import androidx.viewpager2.widget.ViewPager2
 import com.lemonhope.cq.Database
 import com.lemonhope.cq.R
 import com.lemonhope.cq.models.QuoteModel
+import com.lemonhope.cq.models.Topic
 import io.realm.kotlin.ext.query
-import io.realm.kotlin.query.RealmResults
 import java.time.LocalDate
 import kotlin.random.Random
 
@@ -62,14 +58,22 @@ class ViewPagerAdapter(
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        if(position == itemCount-1){
+        if (position == itemCount - 1) {
             viewPager.post(runnable)
         }
         var currentItem = contents[position]
+        val color: Int = if (context.resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK == Configuration.UI_MODE_NIGHT_YES)
+                Color.rgb(69, 112, 110)
+            else
+                Color.rgb(117, 189, 185)
 
+        val colors: ArrayList<Int> = arrayListOf(color)
 
-        val colors: ArrayList<Int> = arrayListOf(Color.rgb(117, 189, 185))
-
+        if (currentItem.toString().length > 400) {
+            holder.textQuote.setTextSize(TypedValue.COMPLEX_UNIT_SP, 17f)
+        } else {
+            holder.textQuote.setTextSize(TypedValue.COMPLEX_UNIT_SP, 20f)
+        }
         holder.textQuote.text = currentItem.toString()
         var s: String = ""
         for (i in 0 until currentItem.topics.size) {
@@ -86,10 +90,13 @@ class ViewPagerAdapter(
 
         holder.favImg.setOnClickListener {
             Database.getInstance().writeBlocking {
-                val q: QuoteModel? = this.query<QuoteModel>("_id == $0", currentItem._id).first().find()
+                val q: QuoteModel? =
+                    this.query<QuoteModel>("_id == $0", currentItem._id).first().find()
                 q?.favourite = !currentItem.favourite
             }
-            currentItem =  Database.getInstance().query<QuoteModel>("_id == $0", currentItem._id).first().find()!!
+            currentItem =
+                Database.getInstance().query<QuoteModel>("_id == $0", currentItem._id).first()
+                    .find()!!
             holder.favImg.setImageResource(if (!currentItem.favourite) R.drawable.ic_favourite_empty else R.drawable.ic_favourite)
             val toast =
                 Toast.makeText(
@@ -124,17 +131,19 @@ class ViewPagerAdapter(
     }
 
 
-    private val runnable = Runnable{
+    private val runnable = Runnable {
         getNextSetQuotes()
     }
 
     fun getNextSetQuotes() {
-        var i = kotlin.math.abs(random.nextInt()% 11018)
+        var i = kotlin.math.abs(random.nextInt() % 11018)
         for (n in 0..2) {
 //            randInts.add(i)
-            contents.add(Database.getInstance().query<QuoteModel>("index == $0", i).first().find()!!)
+            contents.add(
+                Database.getInstance().query<QuoteModel>("index == $0", i).first().find()!!
+            )
             i = kotlin.math.abs(random.nextInt() % 11018)
         }
-        notifyItemRangeInserted(contents.size-3, contents.size)
+        notifyItemRangeInserted(contents.size - 3, contents.size)
     }
 }

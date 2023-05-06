@@ -1,25 +1,13 @@
 package com.lemonhope.cq
 
-import android.content.res.Resources
 import android.os.Bundle
-import android.provider.ContactsContract.Data
-import android.util.Log
-import com.google.android.material.bottomnavigation.BottomNavigationView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.findNavController
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
-import com.google.gson.Gson
-import com.google.gson.reflect.TypeToken
+import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.lemonhope.cq.databinding.ActivityMainBinding
-import com.lemonhope.cq.models.Quote
-import com.lemonhope.cq.models.QuoteModel
-import io.realm.kotlin.Realm
-import io.realm.kotlin.RealmConfiguration
-import io.realm.kotlin.ext.query
-import io.realm.kotlin.ext.realmListOf
-import io.realm.kotlin.types.RealmList
 
 class MainActivity : AppCompatActivity() {
 
@@ -29,7 +17,6 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
 
         Database.setResources(resources)
-//        Database.deleteDatabase()
 
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
@@ -41,7 +28,10 @@ class MainActivity : AppCompatActivity() {
         // menu should be considered as top level destinations.
         val appBarConfiguration = AppBarConfiguration(
             setOf(
-                R.id.navigation_home, R.id.navigation_favourite, R.id.navigation_topic, R.id.navigation_search
+                R.id.navigation_home,
+                R.id.navigation_favourite,
+                R.id.navigation_topic,
+                R.id.navigation_search
             )
         )
 
@@ -51,6 +41,8 @@ class MainActivity : AppCompatActivity() {
 
     override fun onDestroy() {
         super.onDestroy()
-        Database.closeDatabase()
+        if (isFinishing) {
+            Database.closeDatabase()
+        }
     }
 }
