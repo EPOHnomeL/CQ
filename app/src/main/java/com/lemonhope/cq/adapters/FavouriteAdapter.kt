@@ -15,76 +15,60 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.cardview.widget.CardView
 import androidx.recyclerview.widget.RecyclerView
-import androidx.viewpager2.widget.ViewPager2
 import com.lemonhope.cq.Database
 import com.lemonhope.cq.R
+import com.lemonhope.cq.models.Quote
 import com.lemonhope.cq.models.QuoteModel
-import com.lemonhope.cq.models.Topic
 import io.realm.kotlin.ext.query
-import java.time.LocalDate
-import kotlin.random.Random
 
-class ViewPagerAdapter(
-    private val contents: MutableList<QuoteModel>,
-    private val context: Context,
-    private val viewPager: ViewPager2
-) : RecyclerView.Adapter<ViewPagerAdapter.ViewHolder>() {
-
-    private val random = Random(LocalDate.now().toEpochDay().toInt())
-
-    class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
+class FavouriteAdapter(
+    private val contents: List<QuoteModel>,
+    private val context: Context
+) :
+    RecyclerView.Adapter<FavouriteAdapter.ViewHolder>() {
+    class ViewHolder(view: View) : RecyclerView.ViewHolder(view){
         val textQuote: TextView
-        val textTopic: TextView
+        val textAuthor: TextView
         val card: CardView
         val copyImg: ImageView
         val favImg: ImageView
 
         init {
-            // Define click listener for the ViewHolder's View
-            textQuote = view.findViewById(R.id.row_home_text_quote)
-            textTopic = view.findViewById(R.id.row_home_text_topic)
-            card = view.findViewById(R.id.row_home_card_view)
-            copyImg = view.findViewById(R.id.row_home_img_copy)
-            favImg = view.findViewById(R.id.row_home_img_fav)
+            textQuote = view.findViewById(R.id.row_fav_quote)
+            textAuthor = view.findViewById(R.id.row_fav_author)
+            card = view.findViewById(R.id.row_fav_card)
+            copyImg = view.findViewById(R.id.row_fav_copy)
+            favImg = view.findViewById(R.id.row_fav_fav)
         }
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         // Create a new view, which defines the UI of the list item
         val view = LayoutInflater.from(parent.context)
-            .inflate(R.layout.row_home, parent, false)
+            .inflate(R.layout.row_fav, parent, false)
 
-        return ViewHolder(view)
+        return FavouriteAdapter.ViewHolder(view)
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        if (position == itemCount - 1) {
-            viewPager.post(runnable)
-        }
-        var currentItem = contents[position]
-        val color: Int = if (context.resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK == Configuration.UI_MODE_NIGHT_YES)
-                Color.rgb(69, 112, 110)
-            else
-                Color.rgb(117, 189, 185)
+        var currentItem = Database.getInstance().copyFromRealm(contents[position])
 
-        val colors: ArrayList<Int> = arrayListOf(color)
+        val colors: ArrayList<Int> = arrayListOf()
 
-        if (currentItem.toString().length > 400) {
-            holder.textQuote.setTextSize(TypedValue.COMPLEX_UNIT_SP, 17f)
-        } else {
-            holder.textQuote.setTextSize(TypedValue.COMPLEX_UNIT_SP, 20f)
-        }
-        holder.textQuote.text = currentItem.toString()
-        var s: String = ""
+        holder.textQuote.text = currentItem.quote
+        holder.textAuthor.text = currentItem.author
+
         for (i in 0 until currentItem.topics.size) {
-            s = s + currentItem.topics[i] + if (i != currentItem.topics.size - 1) ", " else ""
-            colors.add(1, Database.topicToColor(currentItem.topics[i]))
+            colors.add(Database.topicToColor(currentItem.topics[i]))
         }
-        val grad = GradientDrawable(GradientDrawable.Orientation.BR_TL, colors.toIntArray())
-        grad.cornerRadius = 50f
-        holder.card.setBackgroundDrawable(grad)
 
-        holder.textTopic.text = s
+        if(colors.size >= 2) {
+            val grad = GradientDrawable(GradientDrawable.Orientation.BR_TL, colors.toIntArray())
+            grad.cornerRadius = 20f
+            holder.card.setBackgroundDrawable(grad)
+        } else {
+           holder.card.setCardBackgroundColor(colors[0])
+        }
 
         holder.favImg.setImageResource(if (!currentItem.favourite) R.drawable.ic_favourite_empty else R.drawable.ic_favourite)
 
@@ -126,23 +110,7 @@ class ViewPagerAdapter(
     }
 
     override fun getItemCount(): Int {
-        return contents.size;
-    }
+        return contents.size
 
-
-    private val runnable = Runnable {
-        getNextSetQuotes()
-    }
-
-    fun getNextSetQuotes() {
-        var i = kotlin.math.abs(random.nextInt() % 11018)
-        for (n in 0..2) {
-//            randInts.add(i)
-            contents.add(
-                Database.getInstance().query<QuoteModel>("index == $0", i).first().find()!!
-            )
-            i = kotlin.math.abs(random.nextInt() % 11018)
-        }
-        notifyItemRangeInserted(contents.size - 3, contents.size)
     }
 }
